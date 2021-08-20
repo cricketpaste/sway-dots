@@ -1,0 +1,63 @@
+# Commands go through bash
+shell = "bash -c '{}'"
+
+# Sway supports the default '#' comments, so it can be ommited
+# 'rewrite' is also ommited, as it defaults to false
+[[items]]
+file = "~/.config/sway/config"
+template = "sway"
+subtemplate = "colors"
+hook = "swaymsg reload"
+# Swaymsg reload temporarily freezes input, so it's marked as not-light
+light = false
+
+[[item]]
+file = "~/.config/alacritty/alacritty.yml"
+template = "alacritty"
+subtemplate = "default-256"
+
+[[item]]
+file = "~/.config/nvim/colors/base16.vim"
+template = "vim"
+rewrite = true
+hook = "reloadnvim"
+
+[[item]]
+file = "~/.config/wofi/style.css"
+template = "wofi"
+rewrite = true
+# hook = "reloadnvim"
+
+[[item]]
+file = "~/.config/sway/config"
+template = "sway"
+subtemplate = "colors"
+light = false
+#hook = "while true; do pgrep -x inkscape && while true; do pgrep -x inkscape || break; done && break; done && swaymsg reload"
+hook = "swaymsg reload"
+rewrite = false
+
+
+[[item]]
+file = "~/.config/leftwm/themes/stupid/polybar/colors.ini"
+template = "polybar"
+start= "; Start flavours"
+end = "; End flavours"
+
+[[item]]
+file = "~/.config/waybar/colors.css"
+template = "waybar"
+hook = "pkill -SIGRTMIN+7 waybar"
+rewrite = true
+
+[[item]]
+file = "~/.config/mako/config"
+template = "mako"
+# hook = "pkill -SIGRTMIN+7 waybar"
+rewrite = false
+
+[[item]]
+file = "~/.config/qutebrowser/config.py"
+template = "qutebrowser"
+# hook = "pkill -SIGRTMIN+7 waybar"
+rewrite = false
