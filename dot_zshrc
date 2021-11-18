@@ -1,0 +1,239 @@
+# vim: set filetype=zsh foldmethod=marker foldmarker=[[[,]]] :
+
+[[ -z "$TMUX" ]] && tmux
+
+# [[[ options
+setopt COMBINING_CHARS
+setopt INTERACTIVE_COMMENTS
+setopt RC_QUOTES
+
+setopt APPEND_HISTORY
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_SPACE
+setopt SHARE_HISTORY
+setopt HIST_VERIFY
+
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt PUSHD_SILENT
+setopt PUSHD_TO_HOME
+
+setopt AUTO_MENU
+setopt GLOB_COMPLETE
+setopt LIST_ROWS_FIRST
+
+unsetopt MULTIOS
+# options ]]]
+
+autoload -U select-word-style
+select-word-style bash
+
+# [[[ completion
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# preview directory's content with exa when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
+# switch group using `,` and `.`
+zstyle ':fzf-tab:*' switch-group ',' '.'
+zstyle ':fzf-tab:*' continuous-trigger '/'
+
+# give a preview of commandline arguments when completing `kill`
+zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
+    '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
+zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
+zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
+export LESSOPEN='|~/.lessfilter %s'
+
+zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' \
+	fzf-preview 'echo ${(P)word}'
+
+# it is an example. you can change it
+zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
+	'git diff $word | delta'|
+zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
+	'git log --color=always $word'
+zstyle ':fzf-tab:complete:git-help:*' fzf-preview \
+	'git help $word | bat -plman --color=always'
+zstyle ':fzf-tab:complete:git-show:*' fzf-preview \
+	'case "$group" in
+	"commit tag") git show --color=always $word ;;
+	*) git show --color=always $word | delta ;;
+	esac'
+zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
+	'case "$group" in
+	"modified file") git diff $word | delta ;;
+	"recent commit object name") git show --color=always $word | delta ;;
+	*) git log --color=always $word ;;
+	esac'
+
+zstyle ':completion:*' menu select=2
+zstyle ':completion:*' group-name ''
+zstyle ':completion:::::' completer _expand _expand_alias _complete _ignored _correct _approximate
+zstyle ':completion:*' squeeze-slashes true
+
+zstyle ':completion:*:functions' ignored-patterns '_*'
+zstyle '*' single-ignored 'show'
+
+zstyle ':completion:*' accept-exact '*(N)'
+zstyle ':completion:*' use-cache on
+zstyle ':completion:*' cache-path "${ZSH_CACHE_DIR}/zcompcache"
+
+zstyle ':completion:*:corrections' format '%B%d%b (%e errors)'
+zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:messages' format '%B%F{yellow}%d%f%b'
+zstyle ':completion:*:warnings' format '%B%F{red}No matches found!%f%b'
+# # completion ]]]
+
+declare -A ZED
+ZED[CACHE_DIR]="${HOME}/.cache/zsh/.zed"
+ZED[DATA_DIR]="${HOME}/.local/share/zsh/.zed"
+
+source "${ZED[DATA_DIR]}/self/zed.zsh"
+zed init
+
+fpath+="${DOTFILES_MODULES}/zsh/completions"
+fpath+="${ZSH_DATA_DIR}/completions"
+
+zed load github.com/zsh-users/zsh-completions
+
+zed load github.com/trapd00r/LS_COLORS \
+  onpull:'dircolors -b LS_COLORS > LS_COLORS.plugin.zsh' \
+  onload:'zstyle ":completion:*" list-colors "${(s.:.)LS_COLORS}"'
+zed load github.com/zpm-zsh/colorize
+zed load github.com/zpm-zsh/ls
+zed load github.com/Aloxaf/fzf-tab
+if (( ${+commands[zoxide]} )); then
+  zed load github.com/MunifTanjim/null name:'zoxide' \
+    onpull:'zoxide init --no-aliases zsh > zoxide.plugin.zsh && echo "z() { __zoxide_z \$@ }" >> zoxide.plugin.zsh'
+fi
+
+##  zed load "${DOTFILES_MODULES}/aliases.sh"
+##  zed load "${DOTFILES_MODULES}/helpers.sh"
+##  {{ if eq .chezmoi.os "darwin" -}}
+##    zed load "${DOTFILES_MODULES}/os.darwin.plugin.sh"
+##  {{ end -}}
+##  zed load "${DOTFILES_MODULES}/gpg.plugin.sh"
+##  
+# zed load "~/.local/share/zsh/fzf.plugin.sh"
+##  zed load "${DOTFILES_MODULES}/go.plugin.sh"
+##  zed load "${DOTFILES_MODULES}/lf.plugin.sh"
+##  zed load "${DOTFILES_MODULES}/node.plugin.sh" \
+##    onload:'__init_nvm'
+##  zed load "${DOTFILES_MODULES}/python.plugin.sh"
+##  zed load "${DOTFILES_MODULES}/ruby.plugin.sh"
+##  zed load "${DOTFILES_MODULES}/rust.plugin.sh"
+
+# [[[ zle utilities
+zle--change-cursor() {
+  local -r style="${1}"
+  local -r cursor="\x1b[%s q"
+  if [[ "${style}" == "beam" ]]; then
+    printf "${cursor}" 6
+  elif [[ "${style}" == "block" ]]; then
+    printf "${cursor}" 2
+  fi
+}
+# zle utilities ]]]
+
+# [[[ zle-keymap-select
+zle-keymap-select() {
+  if [[ $KEYMAP == "vicmd" ]]; then
+    zle--change-cursor "block"
+  else
+    zle--change-cursor "beam"
+  fi
+  zle -R
+}
+zle -N zle-keymap-select
+# zle-keymap-select ]]]
+
+# [[[ zle-line-{init,finish}
+zle-line-init () {
+  zle--change-cursor "beam"
+  printf '%s' ${terminfo[smkx]}
+}
+zle -N zle-line-init
+
+zle-line-finish () {
+  printf '%s' ${terminfo[rmkx]}
+}
+zle -N zle-line-finish
+# zle-line-{init-finish} ]]]
+
+# [[[ keybindings
+export KEYTIMEOUT=10
+
+declare -g -A key=(
+  Up                "${terminfo[kcuu1]}"
+  Down              "${terminfo[kcud1]}"
+  Left              "${terminfo[kcub1]}"
+  Right             "${terminfo[kcuf1]}"
+  Home              "${terminfo[khome]}"
+  End               "${terminfo[kend]}"
+  PageUp            "${terminfo[kpp]}"
+  PageDown          "${terminfo[knp]}"
+  Insert            "${terminfo[kich1]}"
+  Delete            "${terminfo[kdch1]}"
+  BackSpace         "${terminfo[kbs]}"
+  Control-Left      "^[[1;5D"
+  Control-Right     "^[[1;5C"
+  Control-Delete    "^[[3;5~"
+  Control-Backspace "^H"
+  Shift-Tab         "${terminfo[kcbt]}"
+)
+
+bindkey -v
+
+autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+
+bindkey "${key[Up]}" up-line-or-beginning-search
+bindkey "${key[Down]}" down-line-or-beginning-search
+bindkey "${key[Control-Left]}"  backward-word
+bindkey "${key[Control-Right]}" forward-word
+bindkey "${key[Control-Backspace]}" backward-kill-word
+bindkey "${key[Control-Delete]}" kill-word
+bindkey "${key[Shift-Tab]}" reverse-menu-complete
+# keybindings ]]]
+zed load github.com/momo-lab/auto-expand-alias
+zed load github.com/zsh-users/zsh-autosuggestions
+zed load github.com/zdharma-mirror/fast-syntax-highlighting
+# zed load github.com/Tarrasch/zsh-autoenv
+zed load github.com/zsh-users/zsh-history-substring-search
+zed load github.com/zpm-zsh/tmux
+zed load github.com/mbenford/zsh-tmux-auto-title
+# zed load github.com/pschmitt/emoji-fzf.zsh
+export STARSHIP_CONFIG=~/.config/starship.toml
+if (( ${+commands[starship]} )); then
+  zed load github.com/MunifTanjim/null name:'starship' \
+    onpull:'starship init zsh --print-full-init > starship.plugin.zsh'
+fi
+
+zed done
+
+# 
+# [[[ OS stuff
+zshcache_time="$(date +%s%N)"
+
+autoload -Uz add-zsh-hook
+
+rehash_precmd() {
+  if [[ -a /var/cache/zsh/pacman ]]; then
+    local paccache_time="$(date -r /var/cache/zsh/pacman +%s%N)"
+    if (( zshcache_time < paccache_time )); then
+      rehash
+      zshcache_time="$paccache_time"
+    fi
+  fi
+}
+
+add-zsh-hook -Uz precmd rehash_precmd
+
+# OS stuff ]]]
+

@@ -22,10 +22,16 @@ template = "vim"
 rewrite = true
 hook = "reloadnvim"
 
+
 [[item]]
-file = "~/.config/wofi/style.css"
-template = "wofi"
+file = "~/.config/rofi/themes/colors.rasi"
+template = "rofi"
+subtemplate = "default"
 rewrite = true
+# [[item]]
+# file = "~/.config/wofi/style.css"
+# template = "wofi"
+# rewrite = true
 # hook = "reloadnvim"
 
 [[item]]

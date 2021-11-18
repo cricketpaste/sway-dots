@@ -11,8 +11,10 @@ xkb_symbols "basic" {
     key <DELE> { [ Delete, Insert ] };
     # map left alt to left super (this mapping is always used)
     key <LWIN> { [ Alt_L ] };
+#    key <RWIN> { [ Alt_R ] };
     # map left super to left alt (this mapping is always used)
     key <LALT> { [ Super_L ] };
+    key <RALT> { [ Super_R ] };
 };
 #xkb_options ctrl:swapcaps_hyper
-xkb_options ctrl:swapcaps
+#xkb_options ctrl:swapcaps

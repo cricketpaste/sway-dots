@@ -72,6 +72,7 @@ Plug 'tomtom/tlib_vim'
 " Plug 'majutsushi/tagbar', {'on': 'TagbarToggle'}
 " Plug 'Shougo/denite.nvim', {'do': ':UpdateRemotePlugins'}
 Plug 'shougo/neoyank.vim'
+
 " Plug 'glacambre/firenvim', { 'do': { _ -> firenvim#install(0) } }
 Plug 'vim-scripts/restore_view.vim'
 Plug 'gioele/vim-autoswap'

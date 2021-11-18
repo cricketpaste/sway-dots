@@ -15,7 +15,8 @@ set $down j
 set $up k
 set $right l
 # Your preferred terminal emulator
-set $term alacritty
+# set $term alacritty
+set $term foot
 # Profile key
 set $profile XF86Tools
 # Light key
@@ -38,6 +39,7 @@ set $menu wofi --hide-scroll | xargs swaymsg exec --
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 focus_follows_mouse yes
 output eDP-1 {
+    # resolution 1920x1080
     resolution 2560x1440
     scale 1.5
     bg ~/wp/pawel-czerwinski-Lq3-u0MCLFI-unsplash.jpg fill
@@ -51,17 +53,8 @@ default_border pixel 4
 # titlebar_border_thickness 2
 for_window [class=".*"] border pixel 4
 
-# border_images.focused ~/.config/sway/borders/dropShadowDarkOffset.png
-# border_images.focused_inactive ~/.config/sway/borders/dropShadowDarkOffset.png
-# border_images.unfocused ~/.config/sway/borders/dropShadowDarkOffset.png
-# border_images.urgent ~/.config/sway/borders/dropShadowDarkOffset.png
-
-# Example configuration:
+set $WOBSOCK $XDG_RUNTIME_DIR/wob.sock
 #
-#   output HDMI-A-1 resolution 1920x1080 position 1920,0
-#
-# You can get the names of your outputs by running: swaymsg -t get_outputs
-
 ### Idle configuration
 #
 # Example configuration:
@@ -77,11 +70,15 @@ for_window [class=".*"] border pixel 4
 
 ### Input configuration
 input type:touchpad {
+    natural_scroll enabled
     tap enabled
+}
+
+input type:pointer {
     natural_scroll enabled
 }
 
-input * {
+input type:keyboard {
     xkb_layout "us,de,ru"
     # xkb_variant "colemak,,typewriter"
     # xkb_options "grp:win_space_toggle"
@@ -107,13 +104,24 @@ input * {
 #
     # Start a terminal
     bindsym $mod+Return exec $term
+    # bindsym $mod+Shift+Return exec foot
 
     # Kill focused window
     bindsym $mod+Shift+q kill
 
     # Start your launcher
+    for_window [app_id="^launcher$"] floating enable, sticky enable, resize \
+        set 30 ppt 60 ppt, border pixel 10
+    set $menu "alacritty --class launcher -e sway-launcher-desktop"
     bindsym $mod+d exec $menu
+
+    # bindsym $mod+d exec $menu
     bindsym $mod+i exec ~/bin/winfo
+    # bindsym $mod+d exec rofimenu applications "舘" applications
+    bindsym --release $mod exec nwggrid -client
+# Run dialog
+    bindsym $alt+F2 exec rofimenu run \> run
+
 
     # Drag floating windows by holding down $mod and left mouse button.
     # Resize them with right mouse button + $mod.
@@ -240,20 +248,32 @@ mode "resize" {
 }
 bindsym $mod+r mode "resize"
 
+bindsym XF86MonBrightnessUp exec light -A 2 \
+    && light -G | cut -d'.' -f1 > $WOBSOCK
+bindsym Shift+XF86MonBrightnessUp exec light -S 100 \
+    && light -G | cut -d'.' -f1 > $WOBSOCK
+bindsym XF86MonBrightnessDown exec light -U 2 \
+    && light -G | cut -d'.' -f1 > $WOBSOCK
+bindsym Shift+XF86MonBrightnessDown exec light -S 1 \
+    && light -G | cut -d'.' -f1 > $WOBSOCK
+
+# bindsym XF86MonBrightnessUp exec backlight_control +10
+# bindsym Shift+XF86MonBrightnessUp exec backlight_control 100
+# bindsym XF86MonBrightnessDown exec backlight_control -10
+# bindsym Shift+XF86MonBrightnessDown exec backlight_control 1
 
 ## Media and volume ##
 # Volume
-bindsym XF86MonBrightnessUp exec backlight_control +10
-bindsym Shift+XF86MonBrightnessUp exec backlight_control 100
-bindsym XF86MonBrightnessDown exec backlight_control -10
-bindsym Shift+XF86MonBrightnessDown exec backlight_control 1
+bindsym XF86AudioRaiseVolume exec pamixer -ui 2 \
+    && pamixer --get-volume > $WOBSOCK
+bindsym XF86AudioLowerVolume exec pamixer -ud 2 \
+    && pamixer --get-volume > $WOBSOCK
+bindsym XF86AudioMute exec pamixer --toggle-mute \
+    && ( pamixer --get-mute && echo 0 > $WOBSOCK ) \
+    || pamixer --get-volume > $WOBSOCK
 
-bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +1%
-bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -1%
-bindsym Shift+XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
-bindsym Shift+XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
-bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
-bindsym Shift+XF86AudioMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+# bindsym Shift+XF86AudioMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
 bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
 
 # Media player controls
@@ -326,7 +346,7 @@ assign [app_id="q4wine"] 9
 #
 # Read `man 5 sway-bar` for more information about this section.
 exec_always 'pkill waybar; waybar'
-exec_always ~/bin/gamma
+# exec_always ~/bin/gamma
 #
 # bar {
 #     position top
@@ -342,25 +362,25 @@ exec_always ~/bin/gamma
 #     }
 # }
 # Start flavours
-## Base16 Synth Midnight Terminal Dark
-# Author: Michaël Ball (http://github.com/michael-ball/)
+## Base16 Tomorrow Night
+# Author: Chris Kempson (http://chriskempson.com)
 
-set $base00 #050608
-set $base01 #1a1b1c
-set $base02 #28292a
-set $base03 #474849
-set $base04 #a3a5a6
-set $base05 #c1c3c4
-set $base06 #cfd1d2
-set $base07 #dddfe0
-set $base08 #b53b50
-set $base09 #ea770d
-set $base0A #c9d364
-set $base0B #06ea61
-set $base0C #42fff9
-set $base0D #03aeff
-set $base0E #ea5ce2
-set $base0F #cd6320
+set $base00 #1d1f21
+set $base01 #282a2e
+set $base02 #373b41
+set $base03 #969896
+set $base04 #b4b7b4
+set $base05 #c5c8c6
+set $base06 #e0e0e0
+set $base07 #ffffff
+set $base08 #cc6666
+set $base09 #de935f
+set $base0A #f0c674
+set $base0B #b5bd68
+set $base0C #8abeb7
+set $base0D #81a2be
+set $base0E #b294bb
+set $base0F #a3685a
 # End flavours
 ## Window decoration
 # class                     border      backgr.     text      indicator c_brdr

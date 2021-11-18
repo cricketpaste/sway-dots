@@ -1,28 +1,12 @@
-/*
-{
-
-    "name": "bottom",
-    "position":" bottom",
-    "height": 30,
-    "modules-center": ["sway/window"],
-    "sway/window": {
-        "format": "{}",
-        "max-length": 50,
-        "rewrite": {
-            "(.*) - Mozilla Firefox": "🌎 $1",
-            "(.*) - zsh": "> [$1]"
-        }
-    },
-}, */
 {
     "name": "top",
     "position": "top", 
-    "height": 30,
+    "height": 10,
     "modules-center": ["custom/ethereum", "custom/crypto"],
     "modules-left": ["sway/workspaces", "sway/window"],
-    "modules-right": ["network", "pulseaudio", "battery", "custom/date", "clock", "custom/power"],
+    "modules-right": ["network", "pulseaudio", "battery", "custom/date", "clock", "tray"],
     // Modules configuration
-        "custom/flavours": {
+    "custom/flavours": {
         "exec": "flavours current && echo Flavours scheme",
         "interval": 5,
         "on-click": "old=\"$(flavours current)\" && flavours list -l | alacritty-fzf --preview='flavours apply -l {}' || flavours apply \"${old}\" && flavours apply \"$(flavours current)\"",
@@ -38,82 +22,82 @@
             "(.*) - zsh": "> [$1]"
         }
     },
-	"sway/workspaces": {
-		"disable-scroll": true,
-		"all-outputs": true,
-		"format": "{name} {icon}",
-	 	"persistent_workspaces": {
-	 		"1": [],
-	 		"2": [],
-	 		"3": [],
-	 		"4": [],
-	 		"5": [],
-	 		"6": [],
-	 		"7": [],
-	 		"8": [],
-	 		"9": [],
-	 		"10": []
-	},
-         	"format-icons": {
-             		"1": "",
-             		"2": "",
-             		"3": "",
-             		"4": "",
-             		"5": "",
-             		"6": "",
-             		"7": "",
-             		"8": "",
-                    "9": "",
-             		"10": ""
-         }
-     },
-	"custom/date": {
-    		"format": "  {}",
-		"interval": 3600,
-		"exec": "/home/tom/.config/waybar/bin/waybar-date.sh"
-	},
-	"custom/power": {
-		"format": "",
-		"on-click": "/home/tom/.config/waybar/bin/waybar-power.sh"
-	},
-	"custom/ethereum": {
-		"format": "♦ {}",
-		"exec": "/home/tom/bin/crypto",
-		"interval": 900,
-	},
-	"custom/crypto": {
-		"format": "♦ {}",
-		"exec": "/home/tom/bin/crypto-tracker.sh",
-		"interval": 300,
-	},
-	"clock": {
-		"format": "  {:%H:%M}",
-        	"tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
-        	"format-alt": "{:%Y-%m-%d}",
-		"interval": 10,
-	},
-	"battery": {
-        	"states": {
-            		"warning": 30,
-            		"critical": 15,
-        	},
-        	"format": "{icon} {capacity}%",
-        	"format-charging": "   {capacity}%",
-        	"format-plugged": "   {capacity}%",
-        	"format-alt": "{time} {icon}",
-        	"format-full": "   {capacity}%",
-        	"format-icons": [ "", "", "", ""  ]
-	},
-	"network": {
-        	"format-wifi": "  {essid}",
-        	"format-ethernet": "{ifname}: {ipaddr}/{cidr} ",
-        	"format-linked": "{ifname} (No IP) ",
-        	"format-disconnected": "󰤮 Disconnected",
-        	"format-alt": "{ifname}: {ipaddr}/{cidr}"
-	},
-	"pulseaudio": {
-		"format": "{icon}  {volume}%",
-        	"format-muted": " Muted",
+    "sway/workspaces": {
+        "disable-scroll": true,
+        "all-outputs": true,
+        "format": "{icon}",
+        "persistent_workspaces": {
+            "1": [],
+            "2": [],
+            "3": [],
+            "4": [],
+            "5": [],
+            "6": [],
+            "7": [],
+            "8": [],
+            "9": [],
+            "10": []
+        },
+        "format-icons": {
+            "1": "",
+            "2": "",
+            "3": "",
+            "4": "",
+            "5": "",
+            "6": "",
+            "7": "",
+            "8": "",
+            "9": "",
+            "10": ""
+        }
+    },
+    "custom/date": {
+        "format": "  {}",
+        "interval": 3600,
+        "exec": "/home/tom/.config/waybar/bin/waybar-date.sh"
+    },
+    "custom/power": {
+        "format": "",
+        "on-click": "/home/tom/.config/waybar/bin/waybar-power.sh"
+    },
+    "custom/ethereum": {
+        "format": "♦ {}",
+        "exec": "/home/tom/bin/crypto",
+        "interval": 900,
+    },
+    "custom/crypto": {
+        "format": "♦ {}",
+        "exec": "/home/tom/bin/crypto-tracker.sh",
+        "interval": 300,
+    },
+    "clock": {
+        "format": "  {:%H:%M}",
+        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+        "format-alt": "{:%Y-%m-%d}",
+        "interval": 10,
+    },
+    "battery": {
+        "states": {
+            "warning": 30,
+            "critical": 15,
+        },
+        "format": "{icon}  {capacity}%",
+        "format-charging": "   {capacity}%",
+        "format-plugged": "   {capacity}%",
+        "format-alt": "{time} {icon}",
+        "format-full": "   {capacity}%",
+        "format-icons": [ "  ", "  ", "  ", "  "  ]
+    },
+    "network": {
+        "format-wifi": "   {ifname} on {essid} at {ipaddr}/{cidr}",
+        "format-ethernet": "{ifname}: {ipaddr}/{cidr} ",
+        "format-linked": "{ifname} (No IP) ",
+        "format-disconnected": "󰤮 Disconnected",
+        "format-alt": "{ifname}: {ipaddr}/{cidr}"
+    },
+    "pulseaudio": {
+        "format": "{icon}  {volume}%",
+        "format-muted": " Muted",
         "format-icons": {
             "headphone": "",
             "hands-free": "",
@@ -123,5 +107,9 @@
             "car": "",
             "default": ["", "", ""]
         },
+    },
+    "tray": {
+        "icon-size": 20,
+        "spacing": 10
     }
 }

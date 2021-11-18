@@ -22,19 +22,19 @@ window#waybar {
   background-color: alpha(@base00,0.66);
   color: @base07;
 	margin: 5px;
-	margin-left: 10px;
+	margin-left: 5px;
 	border-radius: 5px;
 }
 #workspaces button {
     color: @base0C;
-    padding: 5px 10px;
+    padding: 5px 5px;
 }
 
 #workspaces button.focused {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
-  background-color: alpha(@base0E,0.47);
-  color: @base0D;
+  background-color: alpha(@base0E,0.77);
+  color: @base0F;
     border-radius: 5px;
 }
 
@@ -50,7 +50,7 @@ window#waybar {
     color: @base0C;
 	margin: 5px;
 	/* margin-left: 10px; */
-  padding: 10px 10px;
+  padding: 5px 5px;
 	margin-right: 10px;
 	border-radius: 5px;
 }
@@ -77,8 +77,8 @@ window#waybar {
   background-color: alpha(@base00,0.55);
 	border-radius: 5px;
 	margin-right: 10px;
-	margin-top: 5px;
-	margin-bottom: 5px;
+	/* margin-top: 5px; */
+	/* margin-bottom: 5px; */
 	margin-left: 0px;
 	padding: 5px 10px;
 }
@@ -98,7 +98,13 @@ window#waybar {
 }
 
 #battery.warning:not(.charging) {
-    background-color: @base0A;
+    background-color: @base07;
+    color: @base0F;
+    border-radius: 5px 5px 5px 5px;
+}
+
+#battery.critical:not(.charging) {
+    background-color: @base06;
     color: @base0F;
     border-radius: 5px 5px 5px 5px;
 }

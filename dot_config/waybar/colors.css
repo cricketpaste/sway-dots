@@ -1,23 +1,23 @@
 /*
 *
-* Base16 Synth Midnight Terminal Dark
-* Author: Michaël Ball (http://github.com/michael-ball/)
+* Base16 Tomorrow Night
+* Author: Chris Kempson (http://chriskempson.com)
 *
 */
 
-@define-color base00 #050608;
-@define-color base01 #1a1b1c;
-@define-color base02 #28292a;
-@define-color base03 #474849;
-@define-color base04 #a3a5a6;
-@define-color base05 #c1c3c4;
-@define-color base06 #cfd1d2;
-@define-color base07 #dddfe0;
-@define-color base08 #b53b50;
-@define-color base09 #ea770d;
-@define-color base0A #c9d364;
-@define-color base0B #06ea61;
-@define-color base0C #42fff9;
-@define-color base0D #03aeff;
-@define-color base0E #ea5ce2;
-@define-color base0F #cd6320;
+@define-color base00 #1d1f21;
+@define-color base01 #282a2e;
+@define-color base02 #373b41;
+@define-color base03 #969896;
+@define-color base04 #b4b7b4;
+@define-color base05 #c5c8c6;
+@define-color base06 #e0e0e0;
+@define-color base07 #ffffff;
+@define-color base08 #cc6666;
+@define-color base09 #de935f;
+@define-color base0A #f0c674;
+@define-color base0B #b5bd68;
+@define-color base0C #8abeb7;
+@define-color base0D #81a2be;
+@define-color base0E #b294bb;
+@define-color base0F #a3685a;
