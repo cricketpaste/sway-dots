@@ -1,25 +1,38 @@
 # vim: set filetype=zsh foldmethod=marker foldmarker=[[[,]]] :
 
-[[ -z "$TMUX" ]] && tmux
 
 # [[[ options
-setopt COMBINING_CHARS
-setopt INTERACTIVE_COMMENTS
-setopt RC_QUOTES
+bindkey -v 
+bindkey -M vicmd "q" push-line
+typeset -g HISTSIZE=290000 SAVEHIST=290000 HISTFILE=~/.zhistory
+setopt hist_ignore_all_dups
+setopt hist_find_no_dups
+setopt extended_history       # Save time stamps and durations
+setopt hist_expire_dups_first
+setopt inc_append_history
+setopt share_history
+setopt interactive_comments
+setopt octal_zeroes
+setopt no_prompt_cr
+setopt complete_in_word
+setopt auto_menu
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt glob_complete
+setopt glob_dots
+setopt c_bases
+setopt numeric_glob_sort
+setopt promptsubst
+setopt no_auto_cd
+setopt rc_quotes
+setopt extendedglob
+setopt notify
 
-setopt APPEND_HISTORY
-setopt HIST_IGNORE_ALL_DUPS
+setopt COMBINING_CHARS
+
 setopt HIST_IGNORE_SPACE
-setopt SHARE_HISTORY
 setopt HIST_VERIFY
 
-setopt AUTO_CD
-setopt AUTO_PUSHD
-setopt PUSHD_SILENT
-setopt PUSHD_TO_HOME
-
-setopt AUTO_MENU
-setopt GLOB_COMPLETE
 setopt LIST_ROWS_FIRST
 
 unsetopt MULTIOS
@@ -27,49 +40,9 @@ unsetopt MULTIOS
 
 autoload -U select-word-style
 select-word-style bash
-
-# [[[ completion
-# disable sort when completing `git checkout`
-zstyle ':completion:*:git-checkout:*' sort false
-# set descriptions format to enable group support
-zstyle ':completion:*:descriptions' format '[%d]'
-# set list-colors to enable filename colorizing
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
-# preview directory's content with exa when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --color=always $realpath'
-# switch group using `,` and `.`
-zstyle ':fzf-tab:*' switch-group ',' '.'
-zstyle ':fzf-tab:*' continuous-trigger '/'
-
-# give a preview of commandline arguments when completing `kill`
-zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
-zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-preview \
-    '[[ $group == "[process ID]" ]] && ps --pid=$word -o cmd --no-headers -w -w'
-zstyle ':fzf-tab:complete:(kill|ps):argument-rest' fzf-flags --preview-window=down:3:wrap
-zstyle ':fzf-tab:complete:*:*' fzf-preview 'less ${(Q)realpath}'
-export LESSOPEN='|~/.lessfilter %s'
-
-zstyle ':fzf-tab:complete:(-command-|-parameter-|-brace-parameter-|export|unset|expand):*' \
-	fzf-preview 'echo ${(P)word}'
-
-# it is an example. you can change it
-zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview \
-	'git diff $word | delta'|
-zstyle ':fzf-tab:complete:git-log:*' fzf-preview \
-	'git log --color=always $word'
-zstyle ':fzf-tab:complete:git-help:*' fzf-preview \
-	'git help $word | bat -plman --color=always'
-zstyle ':fzf-tab:complete:git-show:*' fzf-preview \
-	'case "$group" in
-	"commit tag") git show --color=always $word ;;
-	*) git show --color=always $word | delta ;;
-	esac'
-zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview \
-	'case "$group" in
-	"modified file") git diff $word | delta ;;
-	"recent commit object name") git show --color=always $word | delta ;;
-	*) git log --color=always $word ;;
-	esac'
+##  
+##  # [[[ completion
+# source ~/.fzf-tab
 
 zstyle ':completion:*' menu select=2
 zstyle ':completion:*' group-name ''
@@ -93,6 +66,13 @@ declare -A ZED
 ZED[CACHE_DIR]="${HOME}/.cache/zsh/.zed"
 ZED[DATA_DIR]="${HOME}/.local/share/zsh/.zed"
 
+zedpath=${ZED[DATA_DIR]}/self
+[[ -d $zedpath ]] || (
+    echo no
+    mkdir -p ${ZED[DATA_DIR]}
+    git clone https://github.com/MunifTanjim/zed.git $zedpath
+)
+
 source "${ZED[DATA_DIR]}/self/zed.zsh"
 zed init
 
@@ -107,6 +87,11 @@ zed load github.com/trapd00r/LS_COLORS \
 zed load github.com/zpm-zsh/colorize
 zed load github.com/zpm-zsh/ls
 zed load github.com/Aloxaf/fzf-tab
+zed load github.com/rupa/z \
+    pick:'z.sh'
+zed load github.com/changyuheng/fz
+zed load github.com/chitoku-k/fzf-zsh-completions
+
 if (( ${+commands[zoxide]} )); then
   zed load github.com/MunifTanjim/null name:'zoxide' \
     onpull:'zoxide init --no-aliases zsh > zoxide.plugin.zsh && echo "z() { __zoxide_z \$@ }" >> zoxide.plugin.zsh'
@@ -237,3 +222,6 @@ add-zsh-hook -Uz precmd rehash_precmd
 
 # OS stuff ]]]
 
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# [[ -z "$TMUX" ]] && tmux
